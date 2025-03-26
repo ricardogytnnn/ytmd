@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Descargador de Música de YouTube</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+
+    <!-- Favicon -->
+    <link rel="icon" href="{{ url_for('static', filename='icons/favicon.png') }}" type="image/png">
+</head>
+
+<body>
+    <button class="toggle-mode" onclick="toggleMode()">🌙 Modo Oscuro</button>
+
+    <div class="container">
+        <h1>🎶 Descargador de Música de YouTube</h1>
+        
+        <!-- Mostrar mensaje de error si existe -->
+        {% if error %}
+            <div class="error-message">
+                <p>{{ error }}</p>
+            </div>
+        {% endif %}
+        
+        <form action="/" method="POST">
+            <label for="url">Ingresa la URL de YouTube:</label>
+            <input type="text" id="url" name="url" required>
+            <button type="submit">Buscar</button>
+        </form>
+
+        {% if archivo %}
+            <div class="success-message">
+                <h2>📌 Información de la canción</h2>
+                <img src="{{ miniatura }}" alt="Portada" class="thumbnail" style="width: 120px; height: 120px; object-fit: cover; border-radius: 8px;">
+                <p><strong>Título:</strong> {{ titulo }}</p>
+                <p><strong>Canal:</strong> {{ canal }}</p>
+                <p><strong>Duración:</strong> {{ duracion // 60 }}:{{ '%02d' % (duracion % 60) }} minutos</p>
+                <a href="{{ url_for('download', filename=archivo) }}" class="download-btn" download>⬇ Descargar MP3</a>
+            </div>
+        {% endif %}
+    </div>
+
+    <script>
+        function toggleMode() {
+            document.body.classList.toggle('light-mode');
+            let mode = document.body.classList.contains('light-mode') ? 'light' : 'dark';
+            localStorage.setItem('theme', mode);
+            document.querySelector('.toggle-mode').innerText = mode === 'light' ? '🌙 Modo Oscuro' : '☀️ Modo Claro';
+        }
+
+        (function() {
+            let savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'light') {
+                document.body.classList.add('light-mode');
+                document.querySelector('.toggle-mode').innerText = '🌙 Modo Oscuro';
+            }
+        })();
+    </script>
+</body>
+</html>
